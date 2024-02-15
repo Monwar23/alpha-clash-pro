@@ -9,7 +9,11 @@
 // }
 function handleKeyboardButtonPress(event){
     const playerPress=event.key
-    console.log(playerPress)
+    // console.log(playerPress)
+    // stop the game if press esc
+    if(playerPress==='escaped'){
+        gameOver()
+    }
     // expected press
     const currentAlphabetElement=document.getElementById('current-alphabet')
     const currentAlphabet=currentAlphabetElement.innerText
@@ -18,26 +22,23 @@ function handleKeyboardButtonPress(event){
     if(playerPress===expectedAlphabet){
         console.log('yes')
         //  score update    
-        //  1.get correct score
-        const currentScoreElement=document.getElementById('current-score')
-        const currentScoreText=currentScoreElement.innerText
-        const currentScore=parseInt(currentScoreText)
-        // 2.increase score 1
-        const NewScore=currentScore+1
-        // 3.show score
-        currentScoreElement.innerText=NewScore
-        // start a new round
+        const currentScore=getTextElementValueById('current-score')
+        const updatedScore=currentScore+1
+        setTextElementValueById('current-score',updatedScore)
+        
+
         removeBackgroundColorById(expectedAlphabet)
         continueGame()
+       
     }
     else{
         console.log('no')
-        const currentLifeElement=document.getElementById('current-life')
-        const currentLifeText=currentLifeElement.innerText
-        const currentLife=parseInt(currentLifeText)
-        const newLife=currentLife-1
-        currentLifeElement.innerText=newLife
-
+        const currentLife=getTextElementValueById('current-life')
+        const updatedLife=currentLife-1
+        setTextElementValueById('current-life',updatedLife)
+        if(updatedLife===0){
+            gameOver();
+        }
     }
 }
 document.addEventListener('keyup',handleKeyboardButtonPress)
@@ -55,6 +56,21 @@ function continueGame(){
 
 function play(){
     hideElementByID('home-screen');
+    hideElementByID('final-score')
     showElementByID('play-ground');
+    // restore life value
+    setTextElementValueById('current-life',5)
+    setTextElementValueById('current-score',0)
     continueGame()
+}
+function gameOver(){
+    hideElementByID('play-ground');
+    showElementByID('final-score')
+    // update final score
+    const lastScore=getTextElementValueById('current-score')
+    setTextElementValueById('last-score',lastScore)
+
+    // clear last highlight
+    const currentAlphabet=getElementTextById('current-alphabet')
+    removeBackgroundColorById(currentAlphabet)
 }
